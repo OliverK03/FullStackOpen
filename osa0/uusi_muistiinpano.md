@@ -11,7 +11,6 @@ sequenceDiagram
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/new_note
     activate server
     server->>browser: HTTP-statuscode 302
-    [comment]: <> (Selain tekee uuden HTTP GET pyynnön)
     deactivate server
 
     Note right of browser: Server tells browser to execute a new HTTP GET command
