@@ -1,23 +1,39 @@
-import { useState } from 'react'
+import { act, useState } from 'react'
 
+const Button = ({ click, text }) => {
+  return (
+    <button onClick={click}>{text}</button>
+  )
+}
 
-const Statistics = ({clicks, totalClicks, average, positive}) => {
+const StatisticLine = ({ text, value }) => {
+  return ( 
+    <tr>
+      <td>{text} </td>
+      <td>{value}</td>
+    </tr>
+  )
+}
+
+const Statistics = ({ clicks, totalClicks, average, positive }) => {
   return (
     <div>
       <b>Statistics</b>
-      <p>
-        good {clicks.good}<br />
-        neutral {clicks.neutral}<br />
-        bad {clicks.bad} <br />
-        all {totalClicks} <br />
-        average {average} <br />
-        positive {positive} % <br />
-      </p>
+      <table>
+        <tbody>
+        <StatisticLine text='Good' value={clicks.good} />
+        <StatisticLine text='Neutral' value={clicks.neutral} />
+        <StatisticLine text='Bad' value={clicks.bad} />
+        <StatisticLine text='All' value={totalClicks} />
+        <StatisticLine text='Average' value={average} />
+        <StatisticLine text='Positive' value={`${positive}%`}  />
+        </tbody>
+      </table>
     </div>
   )
 }
 
-const History = ({clicks, totalClicks, average, positive}) => {
+const History = ({ clicks, totalClicks, average, positive }) => {
   if (totalClicks === 0) {
     return (
       <div>
@@ -42,7 +58,6 @@ const App = () => {
   const [average, setAverage] = useState(0)
   const [positive, setPositive] = useState(0)
 
-  
   const handleGoodClick = () => {
     setClicks({ ...clicks, good: clicks.good + 1 })
     const updateGood = clicks.good + 1
@@ -79,9 +94,9 @@ const App = () => {
       <b>Give Feedback</b>
       <div>
         <br />
-        <button onClick={handleGoodClick}>good</button>
-        <button onClick={handleNeutralClick}>neutral</button>
-        <button onClick={handleBadClick}>bad</button>
+        <Button click={handleGoodClick} text='Good' />
+        <Button click={handleNeutralClick} text='Neutral' />
+        <Button click={handleBadClick} text='Bad' />
       </div>
       <History clicks={clicks} totalClicks={totalClicks} average={average} positive={positive} />
     </div>
