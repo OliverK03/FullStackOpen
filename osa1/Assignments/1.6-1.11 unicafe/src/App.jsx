@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+
 const Statistics = ({clicks, totalClicks, average, positive}) => {
   return (
     <div>
@@ -12,6 +13,24 @@ const Statistics = ({clicks, totalClicks, average, positive}) => {
         average {average} <br />
         positive {positive} % <br />
       </p>
+    </div>
+  )
+}
+
+const History = ({clicks, totalClicks, average, positive}) => {
+  if (totalClicks === 0) {
+    return (
+      <div>
+        <br />
+        <b>Statistics</b>
+        <p>No feedback given</p>
+      </div>
+    )
+  }
+  return (
+    <div>
+      <br />
+      <Statistics clicks={clicks} totalClicks={totalClicks} average={average} positive={positive} />
     </div>
   )
 }
@@ -64,8 +83,7 @@ const App = () => {
         <button onClick={handleNeutralClick}>neutral</button>
         <button onClick={handleBadClick}>bad</button>
       </div>
-      <br />
-      <Statistics clicks={clicks} totalClicks={totalClicks} average={average} positive={positive} />
+      <History clicks={clicks} totalClicks={totalClicks} average={average} positive={positive} />
     </div>
   )
 }
