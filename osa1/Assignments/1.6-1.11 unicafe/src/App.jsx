@@ -29,7 +29,7 @@ const Statistics = ({ clicks, totalClicks, average, positive }) => {
         <StatisticLine text='Positive' value={`${positive}%`}  />
         </tbody>
       </table>
-    </div>
+    </div>  
   )
 }
 
