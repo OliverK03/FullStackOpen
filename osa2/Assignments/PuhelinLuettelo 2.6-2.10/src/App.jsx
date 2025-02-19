@@ -16,6 +16,11 @@ const App = (props) => {
     const personObject = {
       name: newName,
     }
+    const ifSamename = persons.some(person => person.name === newName)
+    if (ifSamename) {
+      alert(`${newName} is already added to phonebook`)
+      return
+    }
 
     setPersons(persons.concat(personObject))
     setNewName('')
