@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import PersonForm from './components/PersonForm'
 import PersonList from './components/PersonList'
 import Filter from './components/Filter'
-import axios from 'axios'
+import personService from './services/persons'
 
 const App = (props) => {
   const [persons, setPersons] = useState([])
@@ -10,17 +10,13 @@ const App = (props) => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
 
-  const hook = () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+  useEffect(() => {
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
-  }
-
-  useEffect(hook, [])
+  }, [])
 
   const personsToShow = filter
     ? persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
@@ -33,13 +29,13 @@ const App = (props) => {
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
   }
-  
 
   const addPerson = (event) => {
     event.preventDefault()
     const personObject = {
       name: newName,
-      number: newNumber
+      number: newNumber,
+      id: String(persons.length + 1),
     }
     const ifSamename = persons.some(person => person.name === newName)
     if (ifSamename) {
@@ -47,9 +43,23 @@ const App = (props) => {
       return
     }
 
-    setPersons(persons.concat(personObject))
-    setNewName('')
-    setNewNumber('')
+    personService
+      .create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+      })
+    //
+  }
+
+  const deletePerson = (id) => {
+    const person = persons.find(p => p.id === id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .delete(id)
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== id))
+      })
+    } 
   }
 
   return (
@@ -65,7 +75,7 @@ const App = (props) => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <PersonList personsToShow={personsToShow} />
+      <PersonList personsToShow={personsToShow} handleDelete={deletePerson}/>
     </div>
   )
 }
