@@ -9,6 +9,8 @@ const App = (props) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -39,9 +41,16 @@ const App = (props) => {
     }
     const ifSamename = persons.some(person => person.name === newName)
     if (ifSamename) {
-      alert(`${newName} is already added to phonebook`)
+      setErrorMessage(`${newName} is already added to phonebook`)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
       return
     }
+    setMessage(`Added ${newName}`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
 
     personService
       .create(personObject)
@@ -58,13 +67,47 @@ const App = (props) => {
         .delete(id)
         .then(() => {
           setPersons(persons.filter(p => p.id !== id))
-      })
+        })
+        .catch(error => {
+          setErrorMessage(
+            `Information of ${person.name} has already been removed from server`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        })
     } 
+  }
+
+  const SuccessfulNotification = ({ message }) => {
+    if (message === null) {
+      return null
+    }
+
+    return (
+      <div className="success">
+        {message}
+      </div>
+    )
+  }
+
+  const ErrorNotification = ({ message }) => {
+    if (message === null) {
+      return null
+    }
+
+    return (
+      <div className="error">
+        {message}
+      </div>
+    )
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <SuccessfulNotification message={message} />
+      <ErrorNotification message={errorMessage} />
       <Filter setFilter={setFilter} />
       <h3>Add a new person to phonebook</h3>
       <PersonForm
